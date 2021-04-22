@@ -1,7 +1,12 @@
-import { useState, useEffect, useRef } from "react";
+import { useState } from "react";
 import "./App.css";
-import ReactMapGL, { NavigationControl, FlyToInterpolator } from "react-map-gl";
-import Sidebar from "./Components/Sidebar";
+import ReactMapGL, {
+    NavigationControl,
+    FlyToInterpolator,
+    Marker,
+    Popup,
+} from "react-map-gl";
+import Toolbar from "./Components/Toolbar";
 
 function App() {
     const accessToken = process.env.REACT_APP_MAPBOX_ACCESS_TOKEN;
@@ -14,26 +19,33 @@ function App() {
         zoom: 16,
     });
 
+    const [selected, setSelected] = useState(null);
+
     const changeView = (type, value) => {
         type === "lat"
             ? setViewport({
                   ...viewport,
                   latitude: +value,
-                  transitionDuration: 2000,
+                  transitionDuration: 1000,
                   transitionInterpolator: new FlyToInterpolator(),
               })
             : setViewport({
                   ...viewport,
                   longitude: +value,
-                  transitionDuration: 2000,
+                  transitionDuration: 500,
                   transitionInterpolator: new FlyToInterpolator(),
               });
     };
 
+    const officeList = [
+        { name: "London Office", location: [51.541, -0.1429] },
+        { name: "Tel Aviv Office", location: [31.7971, 35.2403] },
+    ];
+
     return (
         <div className="wrapper">
-            <div className="map">
-                <Sidebar
+            <section className="map">
+                <Toolbar
                     lat={viewport.latitude}
                     lng={viewport.longitude}
                     changeView={changeView}
@@ -45,11 +57,47 @@ function App() {
                     mapStyle="mapbox://styles/hannah-developer/cknrt5a4011lh17mseb8f1kt4"
                     onViewportChange={viewport => setViewport(viewport)}
                 >
-                    <div className="controller">
+                    <button className="controller">
                         <NavigationControl />
-                    </div>
+                    </button>
+                    {viewport.zoom > 5 &&
+                        officeList.map((office, i) => (
+                            <Marker
+                                key={i}
+                                latitude={office.location[0]}
+                                longitude={office.location[1]}
+                            >
+                                <button
+                                    className="pointer"
+                                    onClick={() => {
+                                        !selected
+                                            ? setSelected(office)
+                                            : setSelected(null);
+                                    }}
+                                    style={{
+                                        width: viewport.zoom * 2.3,
+                                        height: viewport.zoom * 2,
+                                    }}
+                                />
+                            </Marker>
+                        ))}
+                    {selected && (
+                        <Popup
+                            offsetLeft={viewport.zoom * 1.1}
+                            offsetTop={viewport.zoom * -0.5}
+                            latitude={selected.location[0]}
+                            longitude={selected.location[1]}
+                            className="popup"
+                            anchor="bottom"
+                            dynamicPosition={false}
+                            closeButton={true}
+                            onClose={() => setSelected(null)}
+                        >
+                            <div>{selected.name}</div>
+                        </Popup>
+                    )}
                 </ReactMapGL>
-            </div>
+            </section>
         </div>
     );
 }
