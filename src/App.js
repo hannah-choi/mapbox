@@ -21,20 +21,22 @@ function App() {
 
     const [selected, setSelected] = useState(null);
 
-    const changeView = (type, value) => {
-        type === "lat"
-            ? setViewport({
-                  ...viewport,
-                  latitude: +value,
-                  transitionDuration: 1000,
-                  transitionInterpolator: new FlyToInterpolator(),
-              })
-            : setViewport({
-                  ...viewport,
-                  longitude: +value,
-                  transitionDuration: 500,
-                  transitionInterpolator: new FlyToInterpolator(),
-              });
+    const changeView = (type, val) => {
+        if (type === "lat") {
+            setViewport({
+                ...viewport,
+                latitude: +val,
+                transitionDuration: 1000,
+                transitionInterpolator: new FlyToInterpolator(),
+            });
+        } else {
+            setViewport({
+                ...viewport,
+                longitude: +val,
+                transitionDuration: 500,
+                transitionInterpolator: new FlyToInterpolator(),
+            });
+        }
     };
 
     const officeList = [

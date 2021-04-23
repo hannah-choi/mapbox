@@ -13,7 +13,7 @@ body {
 
 div.wrapper {
     position: relative;
-    width: 900px;
+    width: 1000px;
     height: 700px;
 }
 
@@ -52,6 +52,18 @@ button.pointer {
 
 div.popup {
     z-index: 10;
+}
+
+div.alert {
+    visibility: none;
+}
+
+div.alert.visible {
+    color: white;
+    background-color: darkred;
+    padding: 5px;
+    margin-bottom: 10px;
+    visibility: visible;
 }
 
 input[type="number"] {
